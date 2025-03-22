@@ -72,15 +72,16 @@ public class MobRandomizerMod implements ModInitializer {
 
   public static Entity createRandomizedEntity(ServerWorld world, Entity entity) {
     EntityType<?> newType = randomize(entity.getType());
+    LOGGER.info("Randomizing entity: {} -> {}", entity.getType(), newType);
 
-    Entity newEntity = newType.create(world, SpawnReason.TRIGGERED);
+    Entity newEntity = newType.create(world);
     if (newEntity == null) {
       return null;
     }
     newEntity.copyPositionAndRotation(entity);
     if (entity instanceof MobEntity && newEntity instanceof MobEntity) {
       ((MobEntity) newEntity).initialize(world, world.getLocalDifficulty(newEntity.getBlockPos()),
-          SpawnReason.TRIGGERED, null);
+          SpawnReason.TRIGGERED, null, null);
       if (((MobEntity) entity).isPersistent()) {
         ((MobEntity) newEntity).setPersistent();
       }
@@ -145,6 +146,10 @@ public class MobRandomizerMod implements ModInitializer {
             if (entity != null && !entity.getCommandTags().contains(TAG_ID)
                 && MobRandomizerMod.canRandomize(entity.getType())) {
               Entity newEntity = createRandomizedEntity(world, entity);
+
+              if (newEntity == null) {
+                continue;
+              }
 
               if (newEntity instanceof MobEntity) {
                 ((MobEntity) newEntity).setPersistent();

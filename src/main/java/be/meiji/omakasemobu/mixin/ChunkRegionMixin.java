@@ -34,6 +34,10 @@ public abstract class ChunkRegionMixin {
 
     Entity newEntity = createRandomizedEntity(world, entity);
 
+    if (newEntity == null) {
+      return entity;
+    }
+
     if (newEntity instanceof MobEntity) {
       ((MobEntity) newEntity).setPersistent();
     }
